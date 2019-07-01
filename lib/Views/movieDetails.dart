@@ -20,8 +20,8 @@ class MovieDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // movieBloc.setMovie("301528");
-    // moviesBloc.setVideos("301528");
+    bool _favorite = false;
+    String _titulo;
     return StreamBuilder(
         stream: movieBloc.outMovie,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -42,6 +42,7 @@ class MovieDetails extends StatelessWidget {
             releaseDate: DateTime.parse(snapshot.data['release_date']),
           )));
 
+          _titulo = snapshot.data['title'];
           lista.add(Container(
               padding: EdgeInsets.all(15),
               child: Text(snapshot.data['overview'],
@@ -81,33 +82,40 @@ class MovieDetails extends StatelessWidget {
                 return Scaffold(
                   body: new Builder(
                     builder: (context) => new SliverContainer(
-                      floatingActionButton: new Container(
-                        height: 60.0,
-                        width: 60.0,
-                        decoration: new BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.grey,
-                          // image: new DecorationImage(
-                          //   image: new ExactAssetImage("assets/logo.png"),
-                          //   fit: BoxFit.cover,
-                          // ),
-                          border: Border.all(color: Colors.black, width: 2.0),
+                      floatingActionButton: FloatingActionButton(
+                        backgroundColor: Colors.white,
+                        child: Icon(
+                          Icons.favorite_border,
+                          color: _favorite ? Colors.pink : Colors.grey,
+                          size: 30,
                         ),
+                        onPressed: () {
+                          _favorite = !_favorite;
+                        },
                       ),
                       expandedHeight: 200.0,
+                      topScalingEdge: 100,
+                      marginRight: 25,
                       slivers: <Widget>[
                         new SliverAppBar(
+                          // title: Text(_titulo),
                           iconTheme: IconThemeData(color: Colors.white),
                           expandedHeight: 200.0,
                           pinned: true,
                           flexibleSpace: new FlexibleSpaceBar(
                             title: new Text(
-                              "Developer Libs",
+                              _titulo,
+                              textAlign: TextAlign.start,
                               style: TextStyle(color: Colors.white),
+                              
                             ),
-                            // background: new Image.network(
-                            //   snapshot.data[imagePath],
-                            // ),
+                            background: CachedNetworkImage(
+                              placeholder: (context, url) =>
+                                  CircularProgressIndicator(),
+                              imageUrl: "https://image.tmdb.org/t/p/w500/" +
+                                  imagePath,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                         new SliverList(
