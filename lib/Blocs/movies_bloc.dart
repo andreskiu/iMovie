@@ -44,7 +44,7 @@ class BlocController extends BlocBase {
   // }
 
 // stream videos de una pelicula
-  var _videos = BehaviorSubject<dynamic>(seedValue: null);
+  var _videos = PublishSubject<dynamic>();
   Observable<dynamic> get outVideosInfo => _videos.stream;
   Sink<dynamic> get inVideosInfo => _videos.sink;
 

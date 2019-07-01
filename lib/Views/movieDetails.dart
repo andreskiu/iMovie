@@ -20,8 +20,8 @@ class MovieDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // movieBloc.setMovie("301528");
-    // moviesBloc.setVideos("301528");
+    bool _favorite = false;
+    String _titulo;
     return StreamBuilder(
         stream: movieBloc.outMovie,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -42,169 +42,90 @@ class MovieDetails extends StatelessWidget {
             releaseDate: DateTime.parse(snapshot.data['release_date']),
           )));
 
+          _titulo = snapshot.data['title'];
           lista.add(Container(
-              padding: EdgeInsets.only(top: 300, bottom: 30),
-              child: Text(snapshot.data['overview'])));
-          lista.add(Text("Trailers"));
+              padding: EdgeInsets.all(15),
+              child: Text(snapshot.data['overview'],
+                  style: Theme.of(context).textTheme.body1,
+                  textAlign: TextAlign.justify)));
 
-          lista.add(Trailers(
-              imagePath: snapshot.data['backdrop_path'],
-              id: snapshot.data['id'].toString()));
-          // getMovieVideos(snapshot.data['id'].toString()).then((info) {
-          //   info.forEach((movie) {
-          //     print("AGREGANDO TRAILER");
-          //     lista.add(new ListTile(
-          //       title: Trailers(
-          //         imagePath: snapshot.data['backdrop_path'],
-          //         id: movie['id'],
-          //       ), //Text(movie["name"]),
-          //     ));
-          //   });
-          //   lista.add(FlatButton(
-          //     child: Text("Comentarios"),
-          //     onPressed: () {},
-          //   ));
-          // });
+          lista.add(Container(
+              padding: EdgeInsets.only(left: 15),
+              child: Text(
+                "Trailers",
+                style: Theme.of(context).textTheme.subhead,
+              )));
 
-          print("Longitud de la lista: " + lista.length.toString());
-          return Scaffold(
-            body: new Builder(
-              builder: (context) => new SliverContainer(
-                floatingActionButton: new Container(
-                  height: 60.0,
-                  width: 60.0,
-                  decoration: new BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.grey,
-                    // image: new DecorationImage(
-                    //   image: new ExactAssetImage("assets/logo.png"),
-                    //   fit: BoxFit.cover,
-                    // ),
-                    border: Border.all(color: Colors.black, width: 2.0),
-                  ),
-                ),
-                expandedHeight: 200.0,
-                slivers: <Widget>[
-                  new SliverAppBar(
-                    iconTheme: IconThemeData(color: Colors.white),
-                    expandedHeight: 200.0,
-                    pinned: true,
-                    flexibleSpace: new FlexibleSpaceBar(
-                      title: new Text(
-                        "Developer Libs",
-                        style: TextStyle(color: Colors.white),
+          moviesBloc.setVideos(snapshot.data['id'].toString());
+          return StreamBuilder(
+              stream: moviesBloc.outVideosInfo,
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (!snapshot.hasData)
+                  return Center(child: CircularProgressIndicator());
+                if (snapshot.hasError) print("errorrrr");
+
+                snapshot.data.forEach((trailer) {
+                  lista.add(ListTile(
+                    title: Trailer(imagePath: imagePath, trailer: trailer),
+                  ));
+                });
+
+                lista.add(Center(
+                    child: OutlineButton(
+                  borderSide: BorderSide(color: Colors.black, width: 2),
+                  color: Colors.black,
+                  child: Text("Leer Comentarios",
+                      style: Theme.of(context).textTheme.button),
+                  onPressed: () {},
+                )));
+
+                return Scaffold(
+                  body: new Builder(
+                    builder: (context) => new SliverContainer(
+                      floatingActionButton: FloatingActionButton(
+                        backgroundColor: Colors.white,
+                        child: Icon(
+                          Icons.favorite_border,
+                          color: _favorite ? Colors.pink : Colors.grey,
+                          size: 30,
+                        ),
+                        onPressed: () {
+                          _favorite = !_favorite;
+                        },
                       ),
-                      // background: new Image.network(
-                      //   snapshot.data[imagePath],
-                      // ),
+                      expandedHeight: 200.0,
+                      topScalingEdge: 100,
+                      marginRight: 25,
+                      slivers: <Widget>[
+                        new SliverAppBar(
+                          // title: Text(_titulo),
+                          iconTheme: IconThemeData(color: Colors.white),
+                          expandedHeight: 200.0,
+                          pinned: true,
+                          flexibleSpace: new FlexibleSpaceBar(
+                            title: new Text(
+                              _titulo,
+                              textAlign: TextAlign.start,
+                              style: TextStyle(color: Colors.white),
+                              
+                            ),
+                            background: CachedNetworkImage(
+                              placeholder: (context, url) =>
+                                  CircularProgressIndicator(),
+                              imageUrl: "https://image.tmdb.org/t/p/w500/" +
+                                  imagePath,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        new SliverList(
+                            // aqui el contenido de la pagina
+                            delegate: new SliverChildListDelegate(lista)),
+                      ],
                     ),
                   ),
-                  new SliverList(
-                      // aqui el contenido de la pagina
-                      delegate: new SliverChildListDelegate(lista)),
-                ],
-              ),
-            ),
-          );
+                );
+              });
         });
   }
 }
-
-// Center(
-//                 child: SingleChildScrollView(
-//                   child: Column(
-//                     children: <Widget>[
-// Row(
-//   // foto y datos
-//   children: <Widget>[
-//     ClipRRect(
-//         borderRadius: new BorderRadius.circular(15.0),
-//         child: Container(
-//             height: 200,
-//             width: 200 * 0.666,
-//             child: imagePath == null
-//                 ? Text(snapshot.data['title'])
-//                 : CachedNetworkImage(
-//                     placeholder: (context, url) =>
-//                         CircularProgressIndicator(),
-//                     imageUrl:
-//                         "https://image.tmdb.org/t/p/w500/" +
-//                             imagePath,
-//                     fit: BoxFit.cover,
-//                   )
-
-//             // Image.network(
-//             //     "https://image.tmdb.org/t/p/w500/" + imagePath,
-//             //     fit: BoxFit.cover)
-//             // alignment: Alignment.center,
-//             )),
-//     Column(
-//       children: <Widget>[
-//         Text("User Rating"),
-//         Text("estrellitas"),
-//         Text((snapshot.data['vote_average'] / 2)
-//                 .toString() +
-//             " /5.00"), // Dividimos en 2 porque tiene escala del 1 al 10
-//         Text(snapshot.data['vote_count'].toString() +
-//             ' votes.'),
-//         Text("Release Date"),
-//         Text(DateFormat.MMMd()
-//             .addPattern(", ")
-//             .add_y()
-//             .format(DateTime.parse(
-//                 snapshot.data['release_date'])))
-//       ],
-//     )
-//   ],
-// ),
-//                       Text(snapshot.data['overview']),
-//                       Text("Trailers"),
-//                       Text("Trailer 1"),
-//                       Text("Trailer 2"),
-//                       Text("Trailer 3"),
-//                       FlatButton(
-//                         child: Text("Comentarios"),
-//                         onPressed: () {},
-//                       )
-//                     ],
-//                   ),
-//                 ),
-//               ),
-
-// ================================ignorar
-
-// Widget _buildActions() {
-//     Widget profile = new GestureDetector(
-//       onTap: () => (){},
-//       child: new Container(
-//         height: 30.0,
-//         width: 45.0,
-//         decoration: new BoxDecoration(
-//           shape: BoxShape.circle,
-//           color: Colors.grey,
-//           image: new DecorationImage(
-//             image: new ExactAssetImage("assets/logo.png"),
-//             fit: BoxFit.cover,
-//           ),
-//           border: Border.all(color: Colors.black, width: 2.0),
-//         ),
-//       ),
-//     );
-
-// double scale;
-// if (scrollController.hasClients) {
-//   scale = scrollController.offset / 300;
-//   scale = scale * 2;
-//   if (scale > 1) {
-//     scale = 1.0;
-//   }
-// } else {
-//   scale = 0.0;
-// }
-
-// return new Transform(
-//   transform: new Matrix4.identity()..scale(scale, scale),
-//   alignment: Alignment.center,
-//   child: profile,
-// );
-//  }
