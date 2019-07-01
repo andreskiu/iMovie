@@ -43,47 +43,41 @@ class MovieDetails extends StatelessWidget {
           )));
 
           lista.add(Container(
-              padding: EdgeInsets.only(top: 300, bottom: 30),
-              child: Text(snapshot.data['overview'])));
-          lista.add(Text("Trailers"));
+              padding: EdgeInsets.all(15),
+              child: Text(snapshot.data['overview'],
+                  style: Theme.of(context).textTheme.body1,
+                  textAlign: TextAlign.justify)));
 
-          // lista.add(Trailers(
-          //     imagePath: snapshot.data['backdrop_path'],
-          //     id: snapshot.data['id'].toString()));
+          lista.add(Container(
+              padding: EdgeInsets.only(left: 15),
+              child: Text(
+                "Trailers",
+                style: Theme.of(context).textTheme.subhead,
+              )));
 
-          // getMovieVideos(snapshot.data['id'].toString()).then((info) {
-          //   info.forEach((movie) {
-          //     print("AGREGANDO TRAILER");
-          //     lista.add(new ListTile(
-          //       title: Trailers(
-          //         imagePath: snapshot.data['backdrop_path'],
-          //         id: movie['id'],
-          //       ), //Text(movie["name"]),
-          //     ));
-          //   });
-          //   lista.add(FlatButton(
-          //     child: Text("Comentarios"),
-          //     onPressed: () {},
-          //   ));
-          // });
           moviesBloc.setVideos(snapshot.data['id'].toString());
-          print("Longitud de la lista: " + lista.length.toString());
-          return StreamBuilder(initialData: null,
+          return StreamBuilder(
               stream: moviesBloc.outVideosInfo,
               builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (!snapshot.hasData) return CircularProgressIndicator();
+                if (!snapshot.hasData)
+                  return Center(child: CircularProgressIndicator());
                 if (snapshot.hasError) print("errorrrr");
+
                 snapshot.data.forEach((trailer) {
-                  lista.add(new ListTile(
-                    title: Text(trailer['name']),
+                  lista.add(ListTile(
+                    title: Trailer(imagePath: imagePath, trailer: trailer),
                   ));
                 });
-                
-                lista.add(FlatButton(
-                  child: Text("Comentarios"),
+
+                lista.add(Center(
+                    child: OutlineButton(
+                  borderSide: BorderSide(color: Colors.black, width: 2),
+                  color: Colors.black,
+                  child: Text("Leer Comentarios",
+                      style: Theme.of(context).textTheme.button),
                   onPressed: () {},
-                ));
-                
+                )));
+
                 return Scaffold(
                   body: new Builder(
                     builder: (context) => new SliverContainer(
@@ -127,102 +121,3 @@ class MovieDetails extends StatelessWidget {
         });
   }
 }
-
-// Center(
-//                 child: SingleChildScrollView(
-//                   child: Column(
-//                     children: <Widget>[
-// Row(
-//   // foto y datos
-//   children: <Widget>[
-//     ClipRRect(
-//         borderRadius: new BorderRadius.circular(15.0),
-//         child: Container(
-//             height: 200,
-//             width: 200 * 0.666,
-//             child: imagePath == null
-//                 ? Text(snapshot.data['title'])
-//                 : CachedNetworkImage(
-//                     placeholder: (context, url) =>
-//                         CircularProgressIndicator(),
-//                     imageUrl:
-//                         "https://image.tmdb.org/t/p/w500/" +
-//                             imagePath,
-//                     fit: BoxFit.cover,
-//                   )
-
-//             // Image.network(
-//             //     "https://image.tmdb.org/t/p/w500/" + imagePath,
-//             //     fit: BoxFit.cover)
-//             // alignment: Alignment.center,
-//             )),
-//     Column(
-//       children: <Widget>[
-//         Text("User Rating"),
-//         Text("estrellitas"),
-//         Text((snapshot.data['vote_average'] / 2)
-//                 .toString() +
-//             " /5.00"), // Dividimos en 2 porque tiene escala del 1 al 10
-//         Text(snapshot.data['vote_count'].toString() +
-//             ' votes.'),
-//         Text("Release Date"),
-//         Text(DateFormat.MMMd()
-//             .addPattern(", ")
-//             .add_y()
-//             .format(DateTime.parse(
-//                 snapshot.data['release_date'])))
-//       ],
-//     )
-//   ],
-// ),
-//                       Text(snapshot.data['overview']),
-//                       Text("Trailers"),
-//                       Text("Trailer 1"),
-//                       Text("Trailer 2"),
-//                       Text("Trailer 3"),
-//                       FlatButton(
-//                         child: Text("Comentarios"),
-//                         onPressed: () {},
-//                       )
-//                     ],
-//                   ),
-//                 ),
-//               ),
-
-// ================================ignorar
-
-// Widget _buildActions() {
-//     Widget profile = new GestureDetector(
-//       onTap: () => (){},
-//       child: new Container(
-//         height: 30.0,
-//         width: 45.0,
-//         decoration: new BoxDecoration(
-//           shape: BoxShape.circle,
-//           color: Colors.grey,
-//           image: new DecorationImage(
-//             image: new ExactAssetImage("assets/logo.png"),
-//             fit: BoxFit.cover,
-//           ),
-//           border: Border.all(color: Colors.black, width: 2.0),
-//         ),
-//       ),
-//     );
-
-// double scale;
-// if (scrollController.hasClients) {
-//   scale = scrollController.offset / 300;
-//   scale = scale * 2;
-//   if (scale > 1) {
-//     scale = 1.0;
-//   }
-// } else {
-//   scale = 0.0;
-// }
-
-// return new Transform(
-//   transform: new Matrix4.identity()..scale(scale, scale),
-//   alignment: Alignment.center,
-//   child: profile,
-// );
-//  }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:bloc_pattern/bloc_pattern.dart';
-import 'package:imovies/Blocs/single_movie_bloc.dart';
 import 'package:imovies/Views/homeActions.dart';
 import 'package:imovies/Views/movieGrid.dart';
 import 'package:imovies/Blocs/movies_bloc.dart';
@@ -25,6 +24,29 @@ class MyApp extends StatelessWidget {
           title: 'Flutter Demo',
           theme: ThemeData(
             primarySwatch: Colors.blue,
+            textTheme: TextTheme(
+              // Lineas de texto
+                body1: TextStyle( 
+                    color: Colors.black54,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold),
+                // other info
+                body2: TextStyle(
+                    color: Colors.black54,
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold),
+                subhead: TextStyle(
+                    color: Colors.black,
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold),
+                subtitle: TextStyle(
+                    color: Colors.black54,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+                button: TextStyle(
+                    color: Colors.black,
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold)),
           ),
           home: MyHomePage(title: 'Flutter Demo Home Page'),
         ));

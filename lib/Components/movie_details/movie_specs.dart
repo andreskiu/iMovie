@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:smooth_star_rating/smooth_star_rating.dart';
 
 class Specs extends StatelessWidget {
   Specs(
@@ -18,11 +19,11 @@ class Specs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("SE ESTA CONSTRUYENDO LA LINEA ESTA. TITULO: " + titulo);
     return Container(
-      padding: EdgeInsets.only(bottom: 30, top: 30),
+      padding: EdgeInsets.only(top: 30),
       child: Row(
         // foto y datos
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           ClipRRect(
               borderRadius: new BorderRadius.circular(15.0),
@@ -38,20 +39,45 @@ class Specs extends StatelessWidget {
                               "https://image.tmdb.org/t/p/w500/" + imagePath,
                           fit: BoxFit.cover,
                         ))),
-          Column(
-            children: <Widget>[
-              Text("User Rating"),
-              Text("estrellitas"),
-              Text((voteAverage / 2).toString() +
-                  " /5.00"), // Dividimos en 2 porque tiene escala del 1 al 10
-              Text(voteCount.toString() + ' votes.'),
-              Text("Release Date"),
-              Text(DateFormat.MMMd()
-                  .addPattern(", ")
-                  .add_y()
-                  .format(releaseDate))
-            ],
-          )
+          Container(
+              padding: EdgeInsets.only(left: 30),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text("User Rating",
+                      style: Theme.of(context).textTheme.subtitle),
+                  // Text("estrellitas"),
+
+                  Container(
+                      padding: EdgeInsets.only(left: 30),
+                      child: Column(children: <Widget>[
+                        SmoothStarRating(
+                          borderColor: Colors.grey,
+                          starCount: 5,
+                          color: Colors.orange,
+                          allowHalfRating: false, // funciona al reves :S
+                          rating: voteAverage / 2,
+                        ),
+                        Text((voteAverage / 2).toString() + " /5.00",
+                            style: Theme.of(context)
+                                .textTheme
+                                .body2), // Dividimos en 2 porque tiene escala del 1 al 10
+                        Text(voteCount.toString() + ' votes.',
+                            style: Theme.of(context).textTheme.body2),
+                      ])),
+                  Text("Release Date",
+                      style: Theme.of(context).textTheme.subtitle),
+                  Container(
+                      padding: EdgeInsets.only(left: 45),
+                      alignment: Alignment.center,
+                      child: Text(
+                          DateFormat.MMMd()
+                              .addPattern(", ")
+                              .add_y()
+                              .format(releaseDate),
+                          style: Theme.of(context).textTheme.body2))
+                ],
+              ))
         ],
       ),
     );
