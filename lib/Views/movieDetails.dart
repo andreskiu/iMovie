@@ -21,40 +21,43 @@ class MovieDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // movieBloc.setMovie("301528");
-    moviesBloc.setVideos("301528");
+    // moviesBloc.setVideos("301528");
     return StreamBuilder(
-        stream: movieBloc.outMovie.mergeWith([moviesBloc.outVideosInfo]),
+        stream: movieBloc.outMovie,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (!snapshot.hasData) return CircularProgressIndicator();
           if (snapshot.hasError) print("errorrrr");
-          lista.add(new ListTile(
-            title: Text(snapshot.data.toString()),
-          )
-          );
-          // String imagePath = (snapshot.data['poster_path'] == null
-          //     ? snapshot.data['backdrop_path']
-          //     : snapshot.data['poster_path']);
-          // print("DATOS PELICULA: " + snapshot.data.toString());
-          // print("PATH:" + imagePath);
-          // lista.add(new ListTile(
-          //     title: Specs(
-          //   imagePath: imagePath,
-          //   titulo: snapshot.data['title'],
-          //   voteCount: snapshot.data['vote_count'],
-          //   voteAverage: snapshot.data['vote_average'].toDouble(),
-          //   releaseDate: DateTime.parse(snapshot.data['release_date']),
-          // )));
 
-          // lista.add(Container(
-          //     padding: EdgeInsets.only(top: 300, bottom: 30),
-          //     child: Text(snapshot.data['overview'])));
-          // lista.add(Text("Trailers"));
+          String imagePath = (snapshot.data['poster_path'] == null
+              ? snapshot.data['backdrop_path']
+              : snapshot.data['poster_path']);
+          print("DATOS PELICULA: " + snapshot.data.toString());
+          print("PATH:" + imagePath);
+          lista.add(new ListTile(
+              title: Specs(
+            imagePath: imagePath,
+            titulo: snapshot.data['title'],
+            voteCount: snapshot.data['vote_count'],
+            voteAverage: snapshot.data['vote_average'].toDouble(),
+            releaseDate: DateTime.parse(snapshot.data['release_date']),
+          )));
+
+          lista.add(Container(
+              padding: EdgeInsets.only(top: 300, bottom: 30),
+              child: Text(snapshot.data['overview'])));
+          lista.add(Text("Trailers"));
+
+          lista.add(Trailers(
+              imagePath: snapshot.data['backdrop_path'],
+              id: snapshot.data['id'].toString()));
           // getMovieVideos(snapshot.data['id'].toString()).then((info) {
           //   info.forEach((movie) {
           //     print("AGREGANDO TRAILER");
           //     lista.add(new ListTile(
           //       title: Trailers(
-          //           imagePath: snapshot.data['backdrop_path'],id: movie['id'],), //Text(movie["name"]),
+          //         imagePath: snapshot.data['backdrop_path'],
+          //         id: movie['id'],
+          //       ), //Text(movie["name"]),
           //     ));
           //   });
           //   lista.add(FlatButton(
