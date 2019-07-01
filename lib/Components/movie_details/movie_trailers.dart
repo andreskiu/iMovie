@@ -37,46 +37,50 @@ class Trailers extends StatelessWidget {
     //                 )
     //               ])));
     moviesBloc.setVideos(id);
-    return Container(
-        height: 500,
-        // width: 100,
-        child: StreamBuilder(
-            stream: moviesBloc.outVideosInfo,
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (!snapshot.hasData) return CircularProgressIndicator();
-              if (snapshot.hasError) print("errorrrr");
-              print("SNAPSHOT: " + snapshot.data.toString());
-              return ListView.builder(
-                itemCount: snapshot.data.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                      title: ClipRRect(
-                          borderRadius: new BorderRadius.circular(15.0),
-                          child: Container(
-                              padding: EdgeInsets.only(top: 20),
-                              height: 200,
-                              width: 200 * 1.777777,
-                              child: imagePath == null
-                                  ? Center(
-                                      child: Icon(Icons.play_circle_outline,
-                                          size: 60),
-                                    )
-                                  : Stack(children: <Widget>[
-                                      CachedNetworkImage(
-                                        placeholder: (context, url) =>
-                                            CircularProgressIndicator(),
-                                        imageUrl:
-                                            "https://image.tmdb.org/t/p/w500/" +
-                                                imagePath,
-                                        fit: BoxFit.cover,
-                                      ),
-                                      Center(
-                                        child: Icon(Icons.play_circle_outline,
-                                            color: Colors.white, size: 60),
-                                      )
-                                    ]))));
-                },
-              );
-            }));
+    return StreamBuilder(
+        stream: moviesBloc.outVideosInfo,
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (!snapshot.hasData) return CircularProgressIndicator();
+          if (snapshot.hasError) print("errorrrr");
+          print("SNAPSHOT: " + snapshot.data.toString());
+          return Container(
+              height: 200 * snapshot.data.length.toDouble(),
+              // width: 100,
+              child: GridView.count(
+                  crossAxisCount: 1,
+                  children: List.generate(
+                    snapshot.data.length,
+                    (index) {
+                      return ListTile(
+                          title: ClipRRect(
+                              borderRadius: new BorderRadius.circular(15.0),
+                              child: Container(
+                                  padding: EdgeInsets.only(top: 20),
+                                  height: 200,
+                                  width: 200 * 1.777777,
+                                  child: imagePath == null
+                                      ? Center(
+                                          child: Icon(Icons.play_circle_outline,
+                                              size: 60),
+                                        )
+                                      : Stack(children: <Widget>[
+                                          CachedNetworkImage(
+                                            placeholder: (context, url) =>
+                                                CircularProgressIndicator(),
+                                            imageUrl:
+                                                "https://image.tmdb.org/t/p/w500/" +
+                                                    imagePath,
+                                            fit: BoxFit.cover,
+                                          ),
+                                          Center(
+                                            child: Icon(
+                                                Icons.play_circle_outline,
+                                                color: Colors.white,
+                                                size: 60),
+                                          )
+                                        ]))));
+                    },
+                  )));
+        });
   }
 }

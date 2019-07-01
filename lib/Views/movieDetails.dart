@@ -47,9 +47,10 @@ class MovieDetails extends StatelessWidget {
               child: Text(snapshot.data['overview'])));
           lista.add(Text("Trailers"));
 
-          lista.add(Trailers(
-              imagePath: snapshot.data['backdrop_path'],
-              id: snapshot.data['id'].toString()));
+          // lista.add(Trailers(
+          //     imagePath: snapshot.data['backdrop_path'],
+          //     id: snapshot.data['id'].toString()));
+
           // getMovieVideos(snapshot.data['id'].toString()).then((info) {
           //   info.forEach((movie) {
           //     print("AGREGANDO TRAILER");
@@ -65,47 +66,64 @@ class MovieDetails extends StatelessWidget {
           //     onPressed: () {},
           //   ));
           // });
-
+          moviesBloc.setVideos(snapshot.data['id'].toString());
           print("Longitud de la lista: " + lista.length.toString());
-          return Scaffold(
-            body: new Builder(
-              builder: (context) => new SliverContainer(
-                floatingActionButton: new Container(
-                  height: 60.0,
-                  width: 60.0,
-                  decoration: new BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.grey,
-                    // image: new DecorationImage(
-                    //   image: new ExactAssetImage("assets/logo.png"),
-                    //   fit: BoxFit.cover,
-                    // ),
-                    border: Border.all(color: Colors.black, width: 2.0),
-                  ),
-                ),
-                expandedHeight: 200.0,
-                slivers: <Widget>[
-                  new SliverAppBar(
-                    iconTheme: IconThemeData(color: Colors.white),
-                    expandedHeight: 200.0,
-                    pinned: true,
-                    flexibleSpace: new FlexibleSpaceBar(
-                      title: new Text(
-                        "Developer Libs",
-                        style: TextStyle(color: Colors.white),
+          return StreamBuilder(initialData: null,
+              stream: moviesBloc.outVideosInfo,
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (!snapshot.hasData) return CircularProgressIndicator();
+                if (snapshot.hasError) print("errorrrr");
+                snapshot.data.forEach((trailer) {
+                  lista.add(new ListTile(
+                    title: Text(trailer['name']),
+                  ));
+                });
+                
+                lista.add(FlatButton(
+                  child: Text("Comentarios"),
+                  onPressed: () {},
+                ));
+                
+                return Scaffold(
+                  body: new Builder(
+                    builder: (context) => new SliverContainer(
+                      floatingActionButton: new Container(
+                        height: 60.0,
+                        width: 60.0,
+                        decoration: new BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.grey,
+                          // image: new DecorationImage(
+                          //   image: new ExactAssetImage("assets/logo.png"),
+                          //   fit: BoxFit.cover,
+                          // ),
+                          border: Border.all(color: Colors.black, width: 2.0),
+                        ),
                       ),
-                      // background: new Image.network(
-                      //   snapshot.data[imagePath],
-                      // ),
+                      expandedHeight: 200.0,
+                      slivers: <Widget>[
+                        new SliverAppBar(
+                          iconTheme: IconThemeData(color: Colors.white),
+                          expandedHeight: 200.0,
+                          pinned: true,
+                          flexibleSpace: new FlexibleSpaceBar(
+                            title: new Text(
+                              "Developer Libs",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            // background: new Image.network(
+                            //   snapshot.data[imagePath],
+                            // ),
+                          ),
+                        ),
+                        new SliverList(
+                            // aqui el contenido de la pagina
+                            delegate: new SliverChildListDelegate(lista)),
+                      ],
                     ),
                   ),
-                  new SliverList(
-                      // aqui el contenido de la pagina
-                      delegate: new SliverChildListDelegate(lista)),
-                ],
-              ),
-            ),
-          );
+                );
+              });
         });
   }
 }
