@@ -46,7 +46,9 @@ class MyApp extends StatelessWidget {
                 button: TextStyle(
                     color: Colors.black,
                     fontSize: 15,
-                    fontWeight: FontWeight.bold)),
+                    fontWeight: FontWeight.bold)
+                
+                    ),
           ),
           home: MyHomePage(title: 'Flutter Demo Home Page'),
         ));

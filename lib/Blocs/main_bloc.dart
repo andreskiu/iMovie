@@ -13,4 +13,13 @@ class MainBlocController extends BlocBase {
   setTitle(title){
     inTitle.add(title);
   }
+
+  // Stream selected button
+  var _selected = BehaviorSubject<int>(seedValue: 1);
+  Stream<int> get outSelected => _selected.stream;
+  Sink<int> get inSelected => _selected.sink;
+
+  setSelected(selected){
+    inSelected.add(selected);
+  }
 }
