@@ -20,7 +20,7 @@ class MovieDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool _favorite = false;
+    // bool _favorite = false;
     String _titulo;
     return StreamBuilder(
         stream: movieBloc.outMovie,
@@ -80,19 +80,27 @@ class MovieDetails extends StatelessWidget {
                 )));
 
                 return Scaffold(
-                  body: new Builder(
-                    builder: (context) => new SliverContainer(
-                      floatingActionButton: FloatingActionButton(
-                        backgroundColor: Colors.white,
-                        child: Icon(
-                          Icons.favorite_border,
-                          color: _favorite ? Colors.pink : Colors.grey,
-                          size: 30,
-                        ),
-                        onPressed: () {
-                          _favorite = !_favorite;
-                        },
-                      ),
+                  body: new SliverContainer(
+                      floatingActionButton: StreamBuilder(
+                          stream: movieBloc.outFavorite,
+                          builder:
+                              (BuildContext context, AsyncSnapshot snapshot) {
+                            if (!snapshot.hasData)
+                              return Center(child: CircularProgressIndicator());
+                            if (snapshot.hasError) print("errorrrr");
+                            return FloatingActionButton(
+                                backgroundColor: Colors.white,
+                                child: Icon(
+                                  Icons.favorite_border,
+                                  color: snapshot.data ? Colors.pink : Colors.grey,
+                                  size: 30,
+                                ),
+                                onPressed: () {
+                                  // _favorite = !_favorite;
+                                  print("FAVORITO: " + snapshot.data.toString());
+                                  movieBloc.setFavorite(!snapshot.data);
+                                });
+                          }),
                       expandedHeight: 200.0,
                       topScalingEdge: 100,
                       marginRight: 25,
@@ -107,7 +115,6 @@ class MovieDetails extends StatelessWidget {
                               _titulo,
                               textAlign: TextAlign.start,
                               style: TextStyle(color: Colors.white),
-                              
                             ),
                             background: CachedNetworkImage(
                               placeholder: (context, url) =>
@@ -123,7 +130,7 @@ class MovieDetails extends StatelessWidget {
                             delegate: new SliverChildListDelegate(lista)),
                       ],
                     ),
-                  ),
+                  
                 );
               });
         });

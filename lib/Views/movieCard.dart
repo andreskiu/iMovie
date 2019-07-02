@@ -1,3 +1,4 @@
+import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:imovies/Blocs/single_movie_bloc.dart';
@@ -10,9 +11,12 @@ import 'package:imovies/Views/movieDetails.dart';
 class MovieCard extends StatelessWidget {
   MovieCard({@required this.movie});
   final dynamic movie;
-  final bloc = new MovieBlocController();
-
+  // static final bloc = new MovieBlocController();
+  final MovieBlocController bloc = BlocProvider.getBloc<MovieBlocController>();
+  // bool _favorite;
   _viewDetails(BuildContext context) {
+    // enviamos el valor del favorito para que construya el floatingButton
+    // bloc.setFavorite(_favorite);
     Navigator.push(
         context,
         MaterialPageRoute(
@@ -22,11 +26,10 @@ class MovieCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool _favorite = false;
     bloc.setMovie(movie);
-    bloc.outFavorite.listen((valor) {
-      _favorite = valor;
-    });
+    // bloc.outFavorite.listen((valor) {
+    //   _favorite = valor;
+    // });
     return StreamBuilder(
         stream: bloc.outMovie,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -52,26 +55,30 @@ class MovieCard extends StatelessWidget {
                                 imageUrl: "https://image.tmdb.org/t/p/w500/" +
                                     imagePath,
                                 fit: BoxFit.cover,
-                              )
-
-                        // Image.network(
-                        //     "https://image.tmdb.org/t/p/w500/" + imagePath,
-                        //     fit: BoxFit.cover)
-                        // alignment: Alignment.center,
-                        )),
-                IconButton(
-                  icon: Icon(
-                    Icons.favorite_border,
-                    color: _favorite
-                        ? Colors.pink
-                        : Colors.white, // cambiar según sea favorito o no
-                    size: 30,
-                  ),
-                  onPressed: () {
-                    print('caqmbiando favorito: ' + _favorite.toString());
-                    bloc.setFavorite(!_favorite);
-                  }, // esto cambia el valor bien, pero no refresca la tarjeta, ya que no se modifica el stream que la creó
-                )
+                              ))),
+                StreamBuilder(
+                    stream: bloc.outFavorite,
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (!snapshot.hasData) {
+                        // _favorite = false;
+                        // bloc.setFavorite(
+                        //     false); // inicializamos aqui y no en el bloc porque sino se borra el valor al retornar
+                        return CircularProgressIndicator();
+                      }
+                      if (snapshot.hasError) print("errorrrr");
+                      return IconButton(
+                        icon: Icon(
+                          Icons.favorite_border,
+                          color: snapshot.data ? Colors.pink : Colors.white,
+                          size: 30,
+                        ),
+                        onPressed: () {
+                          print('cambiando favorito: ' + snapshot.data.toString());
+                          // _favorite = !snapshot.data;
+                          bloc.setFavorite(!snapshot.data);
+                        }, // esto cambia el valor bien, pero no refresca la tarjeta, ya que no se modifica el stream que la creó
+                      );
+                    })
               ]));
         });
   }

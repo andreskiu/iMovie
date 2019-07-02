@@ -26,7 +26,7 @@ class MovieGrid extends StatelessWidget {
                 children: List.generate(snapshot.data.length, (index) {
                   return MovieCard(
                       movie: snapshot
-                          .data[index]); //Text(snapshot.data[index]['title']);
+                          .data[index]);
                 }));
           });
         });

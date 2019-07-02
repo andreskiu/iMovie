@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:bloc_pattern/bloc_pattern.dart';
+import 'package:imovies/Blocs/single_movie_bloc.dart';
 import 'package:imovies/Views/homeActions.dart';
 import 'package:imovies/Views/movieGrid.dart';
 import 'package:imovies/Blocs/movies_bloc.dart';
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
         blocs: [
           Bloc((i) => BlocController()),
           Bloc((i) => MainBlocController()),
+          Bloc((i) => MovieBlocController())
         ],
         //your main widget
         child: MaterialApp(
