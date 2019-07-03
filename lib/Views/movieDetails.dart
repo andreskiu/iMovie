@@ -1,11 +1,13 @@
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:imovies/Blocs/comments_bloc.dart';
 import 'package:imovies/Blocs/movies_bloc.dart';
 import 'package:imovies/Blocs/single_movie_bloc.dart';
 import 'package:imovies/Components/movie_details/movie_specs.dart';
 import 'package:imovies/Components/movie_details/movie_trailers.dart';
 import 'package:imovies/Components/slivercontainer.dart';
+import 'package:imovies/Helpers/moviedb.dart';
 import 'package:imovies/Views/comentarios.dart';
 
 class MovieDetails extends StatelessWidget {
@@ -18,11 +20,14 @@ class MovieDetails extends StatelessWidget {
   // Lista de widgets para el armado de la pantalla
   final List lista = new List<Widget>();
   final BlocController moviesBloc = BlocProvider.getBloc<BlocController>();
+  final CommentBlocController commentsBloc =
+      BlocProvider.getBloc<CommentBlocController>();
 
   @override
   Widget build(BuildContext context) {
     var _movie;
     String _titulo;
+    bool _visibility;
     return StreamBuilder(
         stream: movieBloc.outMovie,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -74,20 +79,41 @@ class MovieDetails extends StatelessWidget {
                   ));
                 });
 
-                lista.add(Center(
-                    child: OutlineButton(
-                  borderSide: BorderSide(color: Colors.black, width: 2),
-                  color: Colors.black,
-                  child: Text("Leer Comentarios",
-                      style: Theme.of(context).textTheme.button),
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Comentarios(movieId: _movie['id'].toString(),),
-                        ));
+                lista.add(FutureBuilder(
+                  future: getMovieReviews(_movie['id'].toString()),
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.hasData) {
+                      if (snapshot.data.isEmpty)
+                        _visibility = false;
+                      else
+                        _visibility = true;
+                    } else
+                      _visibility = false;
+
+                    return Visibility(
+                      maintainState: true,
+                      maintainAnimation: true,
+                      maintainSize: true,
+                      visible: _visibility,
+                      child: Center(
+                          child: OutlineButton(
+                        borderSide: BorderSide(color: Colors.black, width: 2),
+                        color: Colors.black,
+                        child: Text("Leer Comentarios",
+                            style: Theme.of(context).textTheme.button),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Comentarios(
+                                  movieId: _movie['id'].toString(),
+                                ),
+                              ));
+                        },
+                      )),
+                    );
                   },
-                )));
+                ));
 
                 return Scaffold(
                   body: new SliverContainer(
