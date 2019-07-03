@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:bloc_pattern/bloc_pattern.dart';
-import 'package:imovies/Blocs/single_movie_bloc.dart';
 import 'package:imovies/Views/homeActions.dart';
 import 'package:imovies/Views/movieGrid.dart';
 import 'package:imovies/Blocs/movies_bloc.dart';
 import 'Blocs/main_bloc.dart';
 import 'Blocs/movies_bloc.dart';
+import 'Blocs/single_movie_bloc.dart';
 
 void main() => runApp(MyApp());
 
@@ -27,8 +27,8 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             primarySwatch: Colors.blue,
             textTheme: TextTheme(
-              // Lineas de texto
-                body1: TextStyle( 
+                // Lineas de texto
+                body1: TextStyle(
                     color: Colors.black54,
                     fontSize: 12,
                     fontWeight: FontWeight.bold),
@@ -48,9 +48,7 @@ class MyApp extends StatelessWidget {
                 button: TextStyle(
                     color: Colors.black,
                     fontSize: 15,
-                    fontWeight: FontWeight.bold)
-                
-                    ),
+                    fontWeight: FontWeight.bold)),
           ),
           home: MyHomePage(title: 'Flutter Demo Home Page'),
         ));
@@ -91,12 +89,13 @@ class _MyHomePageState extends State<MyHomePage> {
     mainBloc.outTitle.listen((valor) {
       _titulo = valor;
     });
-
+    //cargamos las peliculas populares para el inicio de la app
     moviesBloc.getPopularMovies();
-    _children.add(MovieGrid(stream: moviesBloc.outMainMovies));
+    // agregamos pantalla principal
+    _children.add(new MovieGrid(stream: moviesBloc.outMainMovies));
 
-    moviesBloc.getFavoritesMovies();
-    _children.add(MovieGrid(stream: moviesBloc.outFavoriteMovies));
+    // agregamos pantalla de favoritos
+    _children.add(new MovieGrid(stream: moviesBloc.outFavoriteMovies));
     super.initState();
   }
 
@@ -131,10 +130,8 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _currentIndex = index;
       if (_currentIndex == 0) {
-        // _titulo = "app";
         _actions = [HomeActions()];
       } else {
-        // _titulo = "222";
         _actions = null;
       }
     });

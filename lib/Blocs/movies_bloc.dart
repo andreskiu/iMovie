@@ -24,24 +24,41 @@ class BlocController extends BlocBase {
   }
 
 // Stream favorite list
-  var _movieFavoriteList = BehaviorSubject<dynamic>(seedValue: null);
+  var _movieFavoriteList = BehaviorSubject<dynamic>(seedValue: []);
   Stream<dynamic> get outFavoriteMovies => _movieFavoriteList.stream;
   Sink<dynamic> get inFavoriteMovies => _movieFavoriteList.sink;
 
-  getFavoritesMovies() async {
-    print("Por añadir items");
-    inFavoriteMovies.add(await getMostRated());
-    print("terminamos de añadir items: " + outMainMovies.length.toString());
+  // getFavoritesMovies() async {
+  //   inFavoriteMovies.add(await getMostRated());
+  // }
+
+  addFavoritesMovies(nueva) async {
+    // print("Agregando nueva peli favorita: " + nueva.toString());
+    List<dynamic> list = _movieFavoriteList.value;
+    if (!esFavorita(nueva)) {
+      list.add(nueva);
+    }
+    inFavoriteMovies.add(list);
+    print("terminamos de añadir favorito: " + outMainMovies.length.toString());
   }
 
-  // // Stream movie
-  // var _movie = BehaviorSubject<dynamic>(seedValue: null);
-  // Stream<dynamic> get outMovie => _movie.stream;
-  // Sink<dynamic> get inMovie => _movie.sink;
+  removeFavoritesMovies(movie) async {
+    // print("Agregando nueva peli favorita: " + nueva.toString());
+    List<dynamic> list = _movieFavoriteList.value;
+    print("ENTRAMOS AL REMOVE");
+    bool salida = list.remove((movie));
+    print("SALIDA: " + salida.toString());
+    // print("LISTA DESPUES DE ELIMINAR: " + list.toString());
+    inFavoriteMovies.add(list);
+  }
 
-  // loadMovie(dynamic movie){
-  //   inMovie.add(movie);
-  // }
+// evalua si la pelicula ya se encuentra en la lista de favoritos
+  bool esFavorita(movie) {
+    List<dynamic> list = _movieFavoriteList.value;
+    return list.any((pelicula) {
+      return pelicula['id'] == movie['id'];
+    });
+  }
 
 // stream videos de una pelicula
   var _videos = PublishSubject<dynamic>();

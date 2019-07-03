@@ -6,8 +6,6 @@ import 'package:imovies/Blocs/single_movie_bloc.dart';
 import 'package:imovies/Components/movie_details/movie_specs.dart';
 import 'package:imovies/Components/movie_details/movie_trailers.dart';
 import 'package:imovies/Components/slivercontainer.dart';
-import 'package:imovies/Helpers/moviedb.dart';
-import 'package:intl/intl.dart';
 
 class MovieDetails extends StatelessWidget {
   MovieDetails(
@@ -15,19 +13,21 @@ class MovieDetails extends StatelessWidget {
           this.movieBloc}); // evalual posibilidad de nor ecibir el bloc como parametro y recuperarlo de algun lado con getBloc(). El problema estaría en la marca de los favoritos
 
   final MovieBlocController movieBloc;
-  final List lista = new List<Widget>();
+
+  // Lista de widgets para el armado de la pantalla
+  final List lista = new List<Widget>(); 
   final BlocController moviesBloc = BlocProvider.getBloc<BlocController>();
 
   @override
   Widget build(BuildContext context) {
-    // bool _favorite = false;
+    var _movie;
     String _titulo;
     return StreamBuilder(
         stream: movieBloc.outMovie,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (!snapshot.hasData) return CircularProgressIndicator();
           if (snapshot.hasError) print("errorrrr");
-
+          _movie = snapshot.data;
           String imagePath = (snapshot.data['poster_path'] == null
               ? snapshot.data['backdrop_path']
               : snapshot.data['poster_path']);
@@ -61,7 +61,10 @@ class MovieDetails extends StatelessWidget {
               stream: moviesBloc.outVideosInfo,
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (!snapshot.hasData)
-                  return Center(child: CircularProgressIndicator());
+                  return Container(
+                      color: Colors.white,
+                      child: Center(child: CircularProgressIndicator()));
+                ;
                 if (snapshot.hasError) print("errorrrr");
 
                 snapshot.data.forEach((trailer) {
@@ -81,56 +84,62 @@ class MovieDetails extends StatelessWidget {
 
                 return Scaffold(
                   body: new SliverContainer(
-                      floatingActionButton: StreamBuilder(
-                          stream: movieBloc.outFavorite,
-                          builder:
-                              (BuildContext context, AsyncSnapshot snapshot) {
-                            if (!snapshot.hasData)
-                              return Center(child: CircularProgressIndicator());
-                            if (snapshot.hasError) print("errorrrr");
-                            return FloatingActionButton(
-                                backgroundColor: Colors.white,
-                                child: Icon(
-                                  Icons.favorite_border,
-                                  color: snapshot.data ? Colors.pink : Colors.grey,
-                                  size: 30,
-                                ),
-                                onPressed: () {
-                                  // _favorite = !_favorite;
-                                  print("FAVORITO: " + snapshot.data.toString());
-                                  movieBloc.setFavorite(!snapshot.data);
-                                });
-                          }),
-                      expandedHeight: 200.0,
-                      topScalingEdge: 100,
-                      marginRight: 25,
-                      slivers: <Widget>[
-                        new SliverAppBar(
-                          // title: Text(_titulo),
-                          iconTheme: IconThemeData(color: Colors.white),
-                          expandedHeight: 200.0,
-                          pinned: true,
-                          flexibleSpace: new FlexibleSpaceBar(
-                            title: new Text(
-                              _titulo,
-                              textAlign: TextAlign.start,
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            background: CachedNetworkImage(
-                              placeholder: (context, url) =>
-                                  CircularProgressIndicator(),
-                              imageUrl: "https://image.tmdb.org/t/p/w500/" +
-                                  imagePath,
-                              fit: BoxFit.cover,
-                            ),
+                    floatingActionButton: StreamBuilder(
+                        stream: moviesBloc.outFavoriteMovies,
+                        builder:
+                            (BuildContext context, AsyncSnapshot snapshot) {
+                          if (!snapshot.hasData)
+                            return Center(child: CircularProgressIndicator());
+                          if (snapshot.hasError) print("errorrrr");
+                          return FloatingActionButton(
+                              backgroundColor: Colors.white,
+                              child: Icon(
+                                Icons.favorite_border,
+                                color: moviesBloc.esFavorita(_movie)
+                                    ? Colors.pink
+                                    : Colors.grey,
+                                size: 30,
+                              ),
+                              onPressed: () {
+                                print("FAVORITO: " + snapshot.data.toString());
+                                if (moviesBloc.esFavorita(_movie)) {
+                                  // si es favorita, la eliminamos
+                                  moviesBloc.removeFavoritesMovies(_movie);
+                                } else {
+                                  //si no es favorita, la agregamos
+                                  moviesBloc.addFavoritesMovies(_movie);
+                                }
+                              });
+                        }),
+                    expandedHeight: 200.0,
+                    topScalingEdge: 100,
+                    marginRight: 25,
+                    slivers: <Widget>[
+                      new SliverAppBar(
+                        // title: Text(_titulo),
+                        iconTheme: IconThemeData(color: Colors.white),
+                        expandedHeight: 200.0,
+                        pinned: true,
+                        flexibleSpace: new FlexibleSpaceBar(
+                          title: new Text(
+                            _titulo,
+                            textAlign: TextAlign.start,
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          background: CachedNetworkImage(
+                            placeholder: (context, url) =>
+                                CircularProgressIndicator(),
+                            imageUrl:
+                                "https://image.tmdb.org/t/p/w500/" + imagePath,
+                            fit: BoxFit.cover,
                           ),
                         ),
-                        new SliverList(
-                            // aqui el contenido de la pagina
-                            delegate: new SliverChildListDelegate(lista)),
-                      ],
-                    ),
-                  
+                      ),
+                      new SliverList(
+                          // aqui el contenido de la pagina
+                          delegate: new SliverChildListDelegate(lista)),
+                    ],
+                  ),
                 );
               });
         });
