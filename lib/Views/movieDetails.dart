@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:imovies/Blocs/comments_bloc.dart';
 import 'package:imovies/Blocs/movies_bloc.dart';
 import 'package:imovies/Blocs/single_movie_bloc.dart';
+import 'package:imovies/Components/Genericos/shimmer.dart';
 import 'package:imovies/Components/movie_details/movie_specs.dart';
 import 'package:imovies/Components/movie_details/movie_trailers.dart';
 import 'package:imovies/Components/slivercontainer.dart';
@@ -31,7 +32,7 @@ class MovieDetails extends StatelessWidget {
     return StreamBuilder(
         stream: movieBloc.outMovie,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (!snapshot.hasData) return CircularProgressIndicator();
+          if (!snapshot.hasData) return MyShimmer();//CircularProgressIndicator();
           if (snapshot.hasError) print("errorrrr");
           _movie = snapshot.data;
           String imagePath = (snapshot.data['poster_path'] == null
@@ -67,9 +68,7 @@ class MovieDetails extends StatelessWidget {
               stream: moviesBloc.outVideosInfo,
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (!snapshot.hasData)
-                  return Container(
-                      color: Colors.white,
-                      child: Center(child: CircularProgressIndicator()));
+                  return MyShimmer();
                 ;
                 if (snapshot.hasError) print("errorrrr");
 
@@ -122,7 +121,7 @@ class MovieDetails extends StatelessWidget {
                         builder:
                             (BuildContext context, AsyncSnapshot snapshot) {
                           if (!snapshot.hasData)
-                            return Center(child: CircularProgressIndicator());
+                            return Center(child: MyShimmer());//CircularProgressIndicator());
                           if (snapshot.hasError) print("errorrrr");
                           return FloatingActionButton(
                               backgroundColor: Colors.white,
@@ -161,7 +160,7 @@ class MovieDetails extends StatelessWidget {
                           ),
                           background: CachedNetworkImage(
                             placeholder: (context, url) =>
-                                CircularProgressIndicator(),
+                                MyShimmer(),//CircularProgressIndicator(), // no deberia verse ya que la imagen se descarga y cachea antes
                             imageUrl:
                                 "https://image.tmdb.org/t/p/w500/" + imagePath,
                             fit: BoxFit.cover,

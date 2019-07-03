@@ -2,6 +2,7 @@ import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:imovies/Blocs/movies_bloc.dart';
+import 'package:imovies/Components/Genericos/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 // import 'package:imovies/Blocs/movies_bloc.dart';
 
@@ -46,7 +47,7 @@ class Trailer extends StatelessWidget {
                         width: 200 * 1.77777,
                         height: 200,
                         placeholder: (context, url) =>
-                            CircularProgressIndicator(),
+                            MyShimmer(),//CircularProgressIndicator(),
                         imageUrl:
                             "https://image.tmdb.org/t/p/w500/" + imagePath,
                         fit: BoxFit.cover,

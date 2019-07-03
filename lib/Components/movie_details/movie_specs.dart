@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:imovies/Components/Genericos/shimmer.dart';
 import 'package:intl/intl.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 
@@ -34,7 +35,7 @@ class Specs extends StatelessWidget {
                       ? Text(titulo)
                       : CachedNetworkImage(
                           placeholder: (context, url) =>
-                              CircularProgressIndicator(),
+                              MyShimmer(),//CircularProgressIndicator(),
                           imageUrl:
                               "https://image.tmdb.org/t/p/w500/" + imagePath,
                           fit: BoxFit.cover,

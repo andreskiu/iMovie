@@ -2,6 +2,7 @@ import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:flutter/material.dart';
 import 'package:imovies/Blocs/comments_bloc.dart';
 import 'package:imovies/Components/Comentarios/comentarioCard.dart';
+import 'package:imovies/Components/Genericos/shimmer.dart';
 
 class Comentarios extends StatelessWidget {
   Comentarios({@required this.movieId});
@@ -21,7 +22,7 @@ class Comentarios extends StatelessWidget {
             stream: commentsBloc.outComments,
             // initialData: initialData ,
             builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (!snapshot.hasData) return CircularProgressIndicator();
+              if (!snapshot.hasData) return MyShimmer();//CircularProgressIndicator();
               if (snapshot.hasError) print("Ha ocurrido un error");
 
               return Container(

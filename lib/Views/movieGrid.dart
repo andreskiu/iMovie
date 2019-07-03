@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:imovies/Components/Genericos/shimmer.dart';
 import 'package:imovies/Views/movieCard.dart';
 
 class MovieGrid extends StatelessWidget {
@@ -13,7 +14,7 @@ class MovieGrid extends StatelessWidget {
         stream: stream,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (!snapshot.hasData)
-            return Center(child: CircularProgressIndicator());
+            return MyShimmer();
           if (snapshot.hasError)
             print("Ups, ocurrio un error:" + snapshot.error.toString());
 
