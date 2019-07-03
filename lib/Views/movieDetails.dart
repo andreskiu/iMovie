@@ -6,6 +6,7 @@ import 'package:imovies/Blocs/single_movie_bloc.dart';
 import 'package:imovies/Components/movie_details/movie_specs.dart';
 import 'package:imovies/Components/movie_details/movie_trailers.dart';
 import 'package:imovies/Components/slivercontainer.dart';
+import 'package:imovies/Views/comentarios.dart';
 
 class MovieDetails extends StatelessWidget {
   MovieDetails(
@@ -15,7 +16,7 @@ class MovieDetails extends StatelessWidget {
   final MovieBlocController movieBloc;
 
   // Lista de widgets para el armado de la pantalla
-  final List lista = new List<Widget>(); 
+  final List lista = new List<Widget>();
   final BlocController moviesBloc = BlocProvider.getBloc<BlocController>();
 
   @override
@@ -79,7 +80,13 @@ class MovieDetails extends StatelessWidget {
                   color: Colors.black,
                   child: Text("Leer Comentarios",
                       style: Theme.of(context).textTheme.button),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Comentarios(movieId: _movie['id'].toString(),),
+                        ));
+                  },
                 )));
 
                 return Scaffold(

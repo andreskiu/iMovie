@@ -40,7 +40,7 @@ Future<String> login(String usuario, String password) async {
 
 Future<dynamic> getMostPopular() async {
   http.Response response = await http
-      .get("https://api.themoviedb.org/3/discover/movie?api_key=" + _apiKey);
+      .get("https://api.themoviedb.org/3/movie/popular?api_key=" + _apiKey);
   // if (response.statusCode == 200) {
   //   peliculas = json.decode(response.body);
   // } else {
@@ -51,7 +51,7 @@ Future<dynamic> getMostPopular() async {
 
 Future<dynamic> getMostRated() async {
   http.Response response = await http
-      .get("https://api.themoviedb.org/3/discover/movie?api_key=" + _apiKey + "&sort_by=vote_average.asc");
+      .get("https://api.themoviedb.org/3/movie/top_rated?api_key=" + _apiKey + "&sort_by=vote_average.asc");
   // if (response.statusCode == 200) {
   //   peliculas = json.decode(response.body);
   // } else {
@@ -74,6 +74,17 @@ Future<dynamic> getMovieDetails(String id) async {
 Future<dynamic> getMovieVideos(String id) async {
   http.Response response = await http
       .get("https://api.themoviedb.org/3/movie/"+id+"/videos?api_key=" + _apiKey + "&sort_by=vote_average.asc");
+  // if (response.statusCode == 200) {
+  //   peliculas = json.decode(response.body);
+  // } else {
+  //   peliculas = List();
+  // }
+  return json.decode(response.body)['results'];
+}
+
+Future<dynamic> getMovieReviews(String id) async {
+  http.Response response = await http
+      .get("https://api.themoviedb.org/3/movie/"+id+"/reviews?api_key=" + _apiKey);
   // if (response.statusCode == 200) {
   //   peliculas = json.decode(response.body);
   // } else {
